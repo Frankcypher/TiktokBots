@@ -1,73 +1,63 @@
+
 <!DOCTYPE html>
 <html>
 <head>
-  <title>TikTok OAuth Demo</title>
+  <title>TikTok Enterprise Demo</title>
 
   <style>
     body {
       margin: 0;
+      background: black;
       font-family: Arial;
-      background: #000;
-      color: white;
       overflow: hidden;
+      color: white;
     }
 
+    /* PHONE FRAME */
+    .phone {
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+      overflow: hidden;
+      background: black;
+    }
+
+    /* TOP BAR */
+    .topbar {
+      position: absolute;
+      top: 0;
+      width: 100%;
+      padding: 10px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      z-index: 10;
+      background: rgba(0,0,0,0.3);
+    }
+
+    /* PAGES */
     .page {
       display: none;
       height: 100vh;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      text-align: center;
-      padding: 20px;
+      width: 100vw;
+      position: absolute;
+      top: 0;
+      left: 0;
     }
 
     .active {
-      display: flex;
-    }
-
-    button {
-      padding: 14px 18px;
-      border: none;
-      border-radius: 10px;
-      background: #ff0050;
-      color: white;
-      font-size: 16px;
-      margin-top: 15px;
-    }
-
-    .card {
-      background: #111;
-      padding: 20px;
-      border-radius: 14px;
-      width: 90%;
-      max-width: 420px;
-    }
-
-    .loader {
-      width: 35px;
-      height: 35px;
-      border: 3px solid #333;
-      border-top: 3px solid #ff0050;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin: 15px auto;
-    }
-
-    @keyframes spin {
-      100% { transform: rotate(360deg); }
+      display: block;
     }
 
     /* FEED */
     #feed {
-      position: relative;
-      height: 100vh;
+      transition: transform 0.5s ease;
     }
 
     .video {
-      position: absolute;
-      width: 100%;
       height: 100vh;
+      width: 100vw;
+      position: relative;
     }
 
     video {
@@ -78,7 +68,7 @@
 
     .overlay {
       position: absolute;
-      bottom: 90px;
+      bottom: 120px;
       left: 20px;
     }
 
@@ -90,151 +80,173 @@
       margin-top: 5px;
       display: inline-block;
     }
+
+    /* NAV BAR */
+    .nav {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px;
+      background: rgba(0,0,0,0.6);
+      font-size: 12px;
+    }
+
+    .nav div {
+      cursor: pointer;
+    }
+
+    /* EXPLORE */
+    .explore {
+      padding: 20px;
+    }
+
+    .card {
+      background: #111;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 12px;
+    }
+
+    /* ANALYTICS */
+    .analytics {
+      padding: 20px;
+    }
+
+    .bar {
+      height: 10px;
+      background: #222;
+      border-radius: 5px;
+      margin: 5px 0;
+    }
+
+    .fill {
+      height: 10px;
+      background: #ff0050;
+      border-radius: 5px;
+    }
+
   </style>
 </head>
 
 <body>
 
-<!-- 1: START -->
-<div id="start" class="page active">
+<div class="phone">
 
-  <h1>🎵 TikTok Integration Demo</h1>
-
-  <div class="card">
-
-    <p>Connect your TikTok account to continue</p>
-
-    <button onclick="login()">
-      Login with TikTok
-    </button>
-
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div>📶 5G</div>
+    <div>🔋 88%</div>
   </div>
 
-</div>
+  <!-- FEED -->
+  <div id="feed" class="page active">
 
-<!-- 2: REDIRECT -->
-<div id="redirect" class="page">
+    <div class="video">
+      <video autoplay muted loop>
+        <source src="https://www.w3schools.com/html/mov_bbb.mp4">
+      </video>
 
-  <div class="card">
-
-    <h2>🔐 Redirecting to TikTok</h2>
-
-    <p>Opening secure OAuth authorization page...</p>
-
-    <div class="loader"></div>
-
-    <p style="opacity:0.6">
-      https://www.tiktok.com/oauth
-    </p>
-
-  </div>
-
-</div>
-
-<!-- 3: CONSENT -->
-<div id="consent" class="page">
-
-  <div class="card">
-
-    <h2>📱 TikTok Permission Screen</h2>
-
-    <p>This application requests:</p>
-
-    <p>✔ Profile info</p>
-    <p>✔ Public videos access</p>
-    <p>✔ Read-only analytics</p>
-
-    <button onclick="approve()">
-      Approve Access
-    </button>
-
-  </div>
-
-</div>
-
-<!-- 4: TOKEN -->
-<div id="token" class="page">
-
-  <div class="card">
-
-    <h2>⚙ Processing OAuth Callback</h2>
-
-    <p>Authorization code received</p>
-    <p>Exchanging access token...</p>
-
-    <div class="loader"></div>
-
-    <p style="opacity:0.6">
-      API simulation step (safe demo)
-    </p>
-
-  </div>
-
-</div>
-
-<!-- 5: FEED -->
-<div id="feed" class="page">
-
-  <div class="video">
-
-    <video autoplay muted loop>
-      <source src="https://www.w3schools.com/html/mov_bbb.mp4">
-    </video>
-
-    <div class="overlay">
-
-      <h2 id="user">@user</h2>
-
-      <div class="tag">
-        ✔ TikTok Connection Successful
+      <div class="overlay">
+        <h3>@creator1</h3>
+        <div class="tag">🔥 For You</div>
       </div>
+    </div>
 
-      <div class="tag">
-        📡 Feed Source: Demo API Simulation
+    <div class="video">
+      <video muted loop>
+        <source src="https://www.w3schools.com/html/movie.mp4">
+      </video>
+
+      <div class="overlay">
+        <h3>@creator2</h3>
+        <div class="tag">🔥 Trending</div>
       </div>
+    </div>
+
+  </div>
+
+  <!-- EXPLORE -->
+  <div id="explore" class="page">
+
+    <div class="explore">
+
+      <h2>🔍 Explore</h2>
+
+      <div class="card">🔥 Viral Videos</div>
+      <div class="card">🎵 Trending Sounds</div>
+      <div class="card">📈 Rising Creators</div>
 
     </div>
 
+  </div>
+
+  <!-- ANALYTICS -->
+  <div id="analytics" class="page">
+
+    <div class="analytics">
+
+      <h2>📊 Creator Insights</h2>
+
+      <p>Engagement</p>
+      <div class="bar"><div class="fill" style="width:80%"></div></div>
+
+      <p>Retention</p>
+      <div class="bar"><div class="fill" style="width:65%"></div></div>
+
+      <p>Viral Score</p>
+      <div class="bar"><div class="fill" style="width:90%"></div></div>
+
+    </div>
+
+  </div>
+
+  <!-- NAV -->
+  <div class="nav">
+    <div onclick="go('feed')">🏠 Home</div>
+    <div onclick="go('explore')">🔍 Explore</div>
+    <div onclick="go('analytics')">📊 Analytics</div>
   </div>
 
 </div>
 
 <script>
 
-let user = "DemoUser";
+function go(page){
 
-function show(id){
   document.querySelectorAll(".page")
   .forEach(p=>p.classList.remove("active"));
 
-  document.getElementById(id)
+  document.getElementById(page)
   .classList.add("active");
+
 }
 
-/* STEP 1 */
-function login(){
-  show("redirect");
+/* SIMPLE SWIPE */
+let startY = 0;
 
-  setTimeout(()=>{
-    show("consent");
-  },2000);
-}
+document.addEventListener("touchstart",e=>{
+  startY = e.touches[0].clientY;
+});
 
-/* STEP 2 */
-function approve(){
-  show("token");
+document.addEventListener("touchend",e=>{
 
-  setTimeout(()=>{
-    show("feed");
+  let endY = e.changedTouches[0].clientY;
 
-    document.getElementById("user")
-    .innerText = "@" + user;
+  let feed = document.getElementById("feed");
 
-  },2500);
-}
+  if(startY - endY > 50){
+    feed.scrollTop += window.innerHeight;
+  }
+
+  if(endY - startY > 50){
+    feed.scrollTop -= window.innerHeight;
+  }
+
+});
 
 </script>
 
 </body>
 </html>
-
