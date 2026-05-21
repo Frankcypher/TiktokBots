@@ -12,6 +12,11 @@
   <div style="margin-top:30px;">
     <h2>Login</h2>
 
+    <input id="username" placeholder="Enter username"
+      style="padding:10px; width:200px;">
+
+    <br><br>
+
     <button onclick="loginTikTok()" style="padding:12px 20px;">
       Login with TikTok
     </button>
@@ -25,8 +30,8 @@
   <div id="profile" style="display:none;">
     <h2>👤 User Profile</h2>
 
-    <p>Name: Demo User</p>
-    <p>Username: @demo_user</p>
+    <p>Name: <span id="nameDisplay">Demo User</span></p>
+    <p>Username: <span id="userDisplay">@demo_user</span></p>
   </div>
 
   <hr style="margin:30px;">
@@ -44,13 +49,26 @@
 
   <script>
     function loginTikTok() {
-      document.getElementById("loginStatus").innerText = "Logging in...";
+      let name = document.getElementById("username").value;
+
+      if (name === "") {
+        document.getElementById("loginStatus").innerText =
+          "Please enter username first ❌";
+        return;
+      }
+
+      document.getElementById("loginStatus").innerText =
+        "Logging in...";
 
       setTimeout(() => {
-        document.getElementById("loginStatus").innerText = "Login successful ✔";
+        document.getElementById("loginStatus").innerText =
+          "Login successful ✔ Welcome " + name;
 
         document.getElementById("profile").style.display = "block";
         document.getElementById("videos").style.display = "block";
+
+        document.getElementById("nameDisplay").innerText = name;
+        document.getElementById("userDisplay").innerText = "@" + name;
       }, 1500);
     }
   </script>
