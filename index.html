@@ -1,57 +1,73 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>TikTok Enterprise Demo</title>
+  <title>TikTok OAuth Demo</title>
 
   <style>
     body {
       margin: 0;
-      background: black;
       font-family: Arial;
-      overflow: hidden;
+      background: #000;
       color: white;
-    }
-
-    .phone {
-      width: 100vw;
-      height: 100vh;
-      position: relative;
       overflow: hidden;
-    }
-
-    .topbar {
-      position: absolute;
-      top: 0;
-      width: 100%;
-      padding: 10px;
-      display: flex;
-      justify-content: space-between;
-      font-size: 12px;
-      z-index: 10;
-      background: rgba(0,0,0,0.3);
     }
 
     .page {
       display: none;
       height: 100vh;
-      width: 100vw;
-      position: absolute;
-      top: 0;
-      left: 0;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      text-align: center;
+      padding: 20px;
     }
 
     .active {
-      display: block;
+      display: flex;
     }
 
+    button {
+      padding: 14px 18px;
+      border: none;
+      border-radius: 10px;
+      background: #ff0050;
+      color: white;
+      font-size: 16px;
+      margin-top: 15px;
+    }
+
+    .card {
+      background: #111;
+      padding: 20px;
+      border-radius: 14px;
+      width: 90%;
+      max-width: 420px;
+    }
+
+    .loader {
+      width: 35px;
+      height: 35px;
+      border: 3px solid #333;
+      border-top: 3px solid #ff0050;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 15px auto;
+    }
+
+    @keyframes spin {
+      100% { transform: rotate(360deg); }
+    }
+
+    /* FEED */
     #feed {
-      transition: transform 0.4s ease;
+      position: relative;
+      height: 100vh;
     }
 
     .video {
+      position: absolute;
+      width: 100%;
       height: 100vh;
-      width: 100vw;
-      position: relative;
     }
 
     video {
@@ -62,7 +78,7 @@
 
     .overlay {
       position: absolute;
-      bottom: 120px;
+      bottom: 90px;
       left: 20px;
     }
 
@@ -74,147 +90,159 @@
       margin-top: 5px;
       display: inline-block;
     }
-
-    .nav {
-      position: absolute;
-      bottom: 0;
-      width: 100%;
-      display: flex;
-      justify-content: space-around;
-      padding: 10px;
-      background: rgba(0,0,0,0.6);
-      font-size: 12px;
-    }
-
-    .nav div {
-      cursor: pointer;
-    }
-
-    /* LIKE ANIMATION */
-    .heart {
-      position: absolute;
-      right: 20px;
-      bottom: 160px;
-      font-size: 30px;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    .heart:active {
-      transform: scale(1.4);
-    }
-
   </style>
 </head>
 
 <body>
 
-<!-- 🎵 BACKGROUND SOUNDTRACK -->
+<!-- 🔊 SOUNDTRACK (AUTO PLAY AFTER LOGIN) -->
 <audio id="bgMusic" loop>
-  <source src="https://cdn.pixabay.com/download/audio/2022/10/16/audio_c8c8a8b6b6.mp3?filename=lofi-study-112191.mp3">
+  <source src="https://cdn.pixabay.com/download/audio/2023/03/07/audio_5c8f4c9c5a.mp3?filename=tech-house-128-123249.mp3" type="audio/mpeg">
 </audio>
 
-<div class="phone">
+<!-- 1: START -->
+<div id="start" class="page active">
 
-  <div class="topbar">
-    <div>📶 5G</div>
-    <div>🔋 88%</div>
+  <h1>🎵 TikTok Integration Demo</h1>
+
+  <div class="card">
+    <p>Connect your TikTok account to continue</p>
+
+    <button onclick="login()">
+      Login with TikTok
+    </button>
   </div>
 
-  <!-- FEED -->
-  <div id="feed" class="page active">
+</div>
 
-    <div class="video">
-      <video autoplay muted loop>
-        <source src="https://www.w3schools.com/html/mov_bbb.mp4">
-      </video>
+<!-- 2: REDIRECT -->
+<div id="redirect" class="page">
 
-      <div class="overlay">
-        <h3>@creator1</h3>
-        <div class="tag">🔐 OAuth: TikTok Login Simulation</div>
-      </div>
+  <div class="card">
 
-      <div class="heart" onclick="like()">❤️</div>
-    </div>
+    <h2>🔐 Redirecting to TikTok</h2>
 
-    <div class="video">
-      <video muted loop>
-        <source src="https://www.w3schools.com/html/movie.mp4">
-      </video>
+    <p>Opening secure OAuth authorization page...</p>
 
-      <div class="overlay">
-        <h3>@creator2</h3>
-        <div class="tag">📡 Feed: Demo Content Source</div>
-      </div>
+    <div class="loader"></div>
 
-      <div class="heart" onclick="like()">❤️</div>
-    </div>
+    <p style="opacity:0.6">
+      https://www.tiktok.com/oauth
+    </p>
 
   </div>
 
-  <!-- NAV -->
-  <div class="nav">
-    <div onclick="switchFeed()">🏠 Feed</div>
-    <div onclick="toggleSound()">🔊 Sound</div>
-    <div onclick="startMusic()">🎵 Music</div>
+</div>
+
+<!-- 3: CONSENT -->
+<div id="consent" class="page">
+
+  <div class="card">
+
+    <h2>📱 TikTok Permission Screen</h2>
+
+    <p>This application requests:</p>
+
+    <p>✔ Profile info</p>
+    <p>✔ Public videos access</p>
+    <p>✔ Read-only analytics</p>
+
+    <button onclick="approve()">
+      Approve Access
+    </button>
+
+  </div>
+
+</div>
+
+<!-- 4: TOKEN -->
+<div id="token" class="page">
+
+  <div class="card">
+
+    <h2>⚙ Processing OAuth Callback</h2>
+
+    <p>Authorization code received</p>
+    <p>Exchanging access token...</p>
+
+    <div class="loader"></div>
+
+    <p style="opacity:0.6">
+      API simulation step (safe demo)
+    </p>
+
+  </div>
+
+</div>
+
+<!-- 5: FEED -->
+<div id="feed" class="page">
+
+  <div class="video">
+
+    <video autoplay muted loop>
+      <source src="https://www.w3schools.com/html/mov_bbb.mp4">
+    </video>
+
+    <div class="overlay">
+
+      <h2 id="user">@user</h2>
+
+      <div class="tag">
+        ✔ TikTok Connection Successful
+      </div>
+
+      <div class="tag">
+        📡 Feed Source: Demo API Simulation
+      </div>
+
+    </div>
+
   </div>
 
 </div>
 
 <script>
 
-let startY = 0;
-let soundOn = false;
+let user = "DemoUser";
 
-/* 🎵 BACKGROUND MUSIC */
-function startMusic(){
-  let music = document.getElementById("bgMusic");
-  music.play();
-  soundOn = true;
+/* SWITCH PAGE */
+function show(id){
+  document.querySelectorAll(".page")
+  .forEach(p=>p.classList.remove("active"));
+
+  document.getElementById(id)
+  .classList.add("active");
 }
 
-/* 🔊 TOGGLE SOUND */
-function toggleSound(){
-  let videos = document.querySelectorAll("video");
+/* STEP 1 */
+function login(){
 
-  videos.forEach(v=>{
-    v.muted = !v.muted;
-  });
+  show("redirect");
 
-  navigator.vibrate?.(50);
+  setTimeout(()=>{
+    show("consent");
+  },2000);
 }
 
-/* ❤️ LIKE SOUND EFFECT */
-function like(){
-  let audio = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_7fb7c5a8d2.mp3?filename=click-124467.mp3");
-  audio.play();
-}
+/* STEP 2 */
+function approve(){
 
-/* SWIPE ENGINE */
-document.addEventListener("touchstart",e=>{
-  startY = e.touches[0].clientY;
-});
+  show("token");
 
-document.addEventListener("touchend",e=>{
+  setTimeout(()=>{
 
-  let endY = e.changedTouches[0].clientY;
-  let feed = document.getElementById("feed");
+    show("feed");
 
-  if(startY - endY > 50){
-    feed.scrollTop += window.innerHeight;
-  }
+    document.getElementById("user")
+    .innerText = "@" + user;
 
-  if(endY - startY > 50){
-    feed.scrollTop -= window.innerHeight;
-  }
+    /* 🎵 START SOUNDTRACK */
+    let music = document.getElementById("bgMusic");
 
-  navigator.vibrate?.(30);
+    music.play().catch(()=>{});
 
-});
-
-/* OPTIONAL NAV RESET */
-function switchFeed(){
-  document.getElementById("feed").scrollTop = 0;
+  },2500);
 }
 
 </script>
