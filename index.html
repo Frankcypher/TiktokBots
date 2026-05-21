@@ -1,39 +1,86 @@
-<script>
-function loginTikTok() {
-  let name = document.getElementById("username").value;
+<!DOCTYPE html>
+<html>
+<head>
+  <title>TikTok Demo Login</title>
+</head>
 
-  if (name === "") {
-    document.getElementById("loginStatus").innerText =
-      "Please enter username first ❌";
-    return;
-  }
+<body style="font-family:Arial; text-align:center; background:#111; color:white; padding:30px;">
 
-  document.getElementById("loginStatus").innerText =
-    "Redirecting to TikTok...";
+  <h1>🎵 TikTok Integration Demo</h1>
 
-  setTimeout(() => {
-    document.getElementById("loginStatus").innerText =
-      "Authorizing with TikTok...";
+  <!-- INPUT -->
+  <input id="username" placeholder="Enter username"
+    style="padding:10px; width:200px;">
 
-    setTimeout(() => {
+  <br><br>
+
+  <!-- BUTTON -->
+  <button onclick="loginTikTok()" style="padding:12px 20px;">
+    Login with TikTok
+  </button>
+
+  <p id="loginStatus" style="margin-top:15px;"></p>
+
+  <hr style="margin:30px;">
+
+  <!-- PROFILE -->
+  <div id="profile" style="display:none;">
+    <h2>👤 Profile</h2>
+    <p>Name: <span id="nameDisplay"></span></p>
+    <p>Username: <span id="userDisplay"></span></p>
+  </div>
+
+  <hr style="margin:30px;">
+
+  <!-- VIDEOS -->
+  <div id="videos" style="display:none;">
+    <h2>🎬 Videos</h2>
+    <ul style="list-style:none;">
+      <li>Video 1 - Trending</li>
+      <li>Video 2 - Viral Idea</li>
+      <li>Video 3 - AI Content</li>
+    </ul>
+  </div>
+
+  <script>
+    function loginTikTok() {
+      let name = document.getElementById("username").value;
+
+      if (name === "") {
+        document.getElementById("loginStatus").innerText =
+          "Please enter username first ❌";
+        return;
+      }
+
       document.getElementById("loginStatus").innerText =
-        "Returning to app...";
+        "Redirecting to TikTok...";
 
       setTimeout(() => {
         document.getElementById("loginStatus").innerText =
-          "Login successful ✔ Welcome " + name;
+          "Authorizing with TikTok...";
 
-        document.getElementById("profile").style.display = "block";
-        document.getElementById("videos").style.display = "block";
+        setTimeout(() => {
+          document.getElementById("loginStatus").innerText =
+            "Returning to app...";
 
-        document.getElementById("nameDisplay").innerText = name;
-        document.getElementById("userDisplay").innerText = "@" + name;
+          setTimeout(() => {
+            document.getElementById("loginStatus").innerText =
+              "Login successful ✔ Welcome " + name;
+
+            document.getElementById("profile").style.display = "block";
+            document.getElementById("videos").style.display = "block";
+
+            document.getElementById("nameDisplay").innerText = name;
+            document.getElementById("userDisplay").innerText = "@" + name;
+
+          }, 1200);
+
+        }, 1200);
 
       }, 1200);
+    }
+  </script>
 
-    }, 1200);
-
-  }, 1200);
-}
-                 </script>
+</body>
+</html>
 
