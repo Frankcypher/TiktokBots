@@ -1,198 +1,108 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>TikTok Demo</title>
+  <title>TikTok OAuth Demo</title>
 
   <style>
-    *{
-      margin:0;
-      padding:0;
-      box-sizing:border-box;
-      font-family:Arial;
+    body {
+      margin: 0;
+      font-family: Arial;
+      background: #000;
+      color: white;
+      overflow: hidden;
     }
 
-    html,body{
-      width:100%;
-      height:100%;
-      overflow:hidden;
-      background:black;
-      color:white;
+    .page {
+      display: none;
+      height: 100vh;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      text-align: center;
+      padding: 20px;
     }
 
-    /* PAGES */
-    .page{
-      width:100%;
-      height:100vh;
-      display:none;
-      justify-content:center;
-      align-items:center;
-      flex-direction:column;
+    .active {
+      display: flex;
     }
 
-    .active{
-      display:flex;
+    button {
+      padding: 14px 18px;
+      border: none;
+      border-radius: 10px;
+      background: #ff0050;
+      color: white;
+      font-size: 16px;
+      margin-top: 15px;
     }
 
-    /* LOGIN */
-    input{
-      width:260px;
-      padding:14px;
-      margin-top:12px;
-      border:none;
-      border-radius:10px;
-      outline:none;
-      font-size:16px;
+    .card {
+      background: #111;
+      padding: 20px;
+      border-radius: 14px;
+      width: 90%;
+      max-width: 420px;
     }
 
-    button{
-      margin-top:15px;
-      padding:14px 20px;
-      border:none;
-      border-radius:10px;
-      background:#ff0050;
-      color:white;
-      font-size:16px;
-      cursor:pointer;
+    .loader {
+      width: 35px;
+      height: 35px;
+      border: 3px solid #333;
+      border-top: 3px solid #ff0050;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 15px auto;
     }
 
-    #loadingText{
-      font-size:22px;
-      text-align:center;
+    @keyframes spin {
+      100% { transform: rotate(360deg); }
     }
 
     /* FEED */
-    #feed{
-      width:100%;
-      height:100vh;
-      transition:0.4s;
+    #feed {
+      position: relative;
+      height: 100vh;
     }
 
-    .video{
-      width:100%;
-      height:100vh;
-      position:relative;
-      overflow:hidden;
-      background:black;
+    .video {
+      position: absolute;
+      width: 100%;
+      height: 100vh;
     }
 
-    video{
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      background:black;
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
 
-    /* OVERLAY */
-    .overlay{
-      position:absolute;
-      bottom:90px;
-      left:15px;
-      z-index:2;
+    .overlay {
+      position: absolute;
+      bottom: 90px;
+      left: 20px;
     }
 
-    .username{
-      font-weight:bold;
-      margin-bottom:8px;
+    .tag {
+      background: #00c2ff;
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      margin-top: 5px;
+      display: inline-block;
     }
-
-    /* ACTIONS */
-    .actions{
-      position:absolute;
-      right:10px;
-      bottom:120px;
-      display:flex;
-      flex-direction:column;
-      gap:18px;
-      z-index:2;
-    }
-
-    .btn{
-      width:55px;
-      height:55px;
-      border-radius:50%;
-      background:rgba(255,255,255,0.15);
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      flex-direction:column;
-      font-size:14px;
-    }
-
-    .muteBtn{
-      position:absolute;
-      top:20px;
-      right:20px;
-      background:rgba(0,0,0,0.5);
-      padding:10px;
-      border-radius:10px;
-      z-index:2;
-    }
-
-    /* COMMENTS */
-    .comments{
-      position:absolute;
-      bottom:-100%;
-      left:0;
-      width:100%;
-      height:40%;
-      background:#111;
-      z-index:3;
-      transition:0.3s;
-      padding:20px;
-    }
-
-    .comments.active{
-      bottom:0;
-    }
-
-    .comment{
-      margin-bottom:15px;
-    }
-
-    /* SHARE */
-    .share{
-      position:absolute;
-      bottom:-100%;
-      left:0;
-      width:100%;
-      height:25%;
-      background:#111;
-      z-index:3;
-      transition:0.3s;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      gap:15px;
-    }
-
-    .share.active{
-      bottom:0;
-    }
-
   </style>
 </head>
 
 <body>
 
-  <!-- LOGIN PAGE -->
-  <div id="loginPage" class="page active">
+<!-- 1: START -->
+<div id="start" class="page active">
 
-    <h1>🎵 TikTok Login</h1>
+  <h1>🎵 TikTok Integration Demo</h1>
 
-    <input
-      id="username"
-      placeholder="Username"
-    >
+  <div class="card">
 
-    <input
-      id="password"
-      type="password"
-      placeholder="Password"
-    >
+    <p>Connect your TikTok account to continue</p>
 
     <button onclick="login()">
       Login with TikTok
@@ -200,299 +110,127 @@
 
   </div>
 
-  <!-- LOADING PAGE -->
-  <div id="loadingPage" class="page">
+</div>
 
-    <h2 id="loadingText">
-      Redirecting to TikTok...
-    </h2>
+<!-- 2: REDIRECT -->
+<div id="redirect" class="page">
+
+  <div class="card">
+
+    <h2>🔐 Redirecting to TikTok</h2>
+
+    <p>Opening secure OAuth authorization page...</p>
+
+    <div class="loader"></div>
+
+    <p style="opacity:0.6">
+      https://www.tiktok.com/oauth
+    </p>
 
   </div>
 
-  <!-- DASHBOARD -->
-  <div id="dashboardPage" class="page">
+</div>
 
-    <div id="feed">
+<!-- 3: CONSENT -->
+<div id="consent" class="page">
 
-      <!-- VIDEO 1 -->
-      <div class="video">
+  <div class="card">
 
-        <video muted loop playsinline>
-          <source src="https://www.w3schools.com/html/mov_bbb.mp4">
-        </video>
+    <h2>📱 TikTok Permission Screen</h2>
 
-        <div class="muteBtn"
-          onclick="toggleMute(this)">
-          🔇
-        </div>
+    <p>This application requests:</p>
 
-        <div class="overlay">
-          <div class="username" id="userDisplay">
-            @user
-          </div>
+    <p>✔ Profile info</p>
+    <p>✔ Public videos access</p>
+    <p>✔ Read-only analytics</p>
 
-          <div>
-            🔥 Trending Dance Video
-          </div>
-        </div>
+    <button onclick="approve()">
+      Approve Access
+    </button>
 
-        <div class="actions">
+  </div>
 
-          <div class="btn">
-            ❤️
-            <small>120K</small>
-          </div>
+</div>
 
-          <div class="btn"
-            onclick="toggleComments(0)">
-            💬
-            <small>5K</small>
-          </div>
+<!-- 4: TOKEN -->
+<div id="token" class="page">
 
-          <div class="btn"
-            onclick="toggleShare(0)">
-            ↗
-          </div>
+  <div class="card">
 
-        </div>
+    <h2>⚙ Processing OAuth Callback</h2>
 
-        <!-- COMMENTS -->
-        <div class="comments" id="comments0">
+    <p>Authorization code received</p>
+    <p>Exchanging access token...</p>
 
-          <div class="comment">
-            🔥 Amazing video
-          </div>
+    <div class="loader"></div>
 
-          <div class="comment">
-            😍 So cool
-          </div>
+    <p style="opacity:0.6">
+      API simulation step (safe demo)
+    </p>
 
-          <div class="comment">
-            🚀 Viral content
-          </div>
+  </div>
 
-        </div>
+</div>
 
-        <!-- SHARE -->
-        <div class="share" id="share0">
+<!-- 5: FEED -->
+<div id="feed" class="page">
 
-          <button>Copy</button>
-          <button>WhatsApp</button>
+  <div class="video">
 
-        </div>
+    <video autoplay muted loop>
+      <source src="https://www.w3schools.com/html/mov_bbb.mp4">
+    </video>
 
+    <div class="overlay">
+
+      <h2 id="user">@user</h2>
+
+      <div class="tag">
+        ✔ TikTok Connection Successful
       </div>
 
-      <!-- VIDEO 2 -->
-      <div class="video">
-
-        <video muted loop playsinline>
-          <source src="https://www.w3schools.com/html/movie.mp4">
-        </video>
-
-        <div class="overlay">
-          <div>
-            🎬 AI Generated Content
-          </div>
-        </div>
-
-      </div>
-
-      <!-- VIDEO 3 -->
-      <div class="video">
-
-        <video muted loop playsinline>
-          <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4">
-        </video>
-
-        <div class="overlay">
-          <div>
-            🚀 Trending For You
-          </div>
-        </div>
-
+      <div class="tag">
+        📡 Feed Source: Demo API Simulation
       </div>
 
     </div>
 
   </div>
 
+</div>
+
 <script>
 
-let currentIndex = 0;
-let startY = 0;
+let user = "DemoUser";
 
-/* PAGE SWITCH */
-function showPage(id){
-
+function show(id){
   document.querySelectorAll(".page")
-  .forEach(page=>{
-    page.classList.remove("active");
-  });
+  .forEach(p=>p.classList.remove("active"));
 
-  document
-  .getElementById(id)
+  document.getElementById(id)
   .classList.add("active");
 }
 
-/* LOGIN */
+/* STEP 1 */
 function login(){
-
-  let username =
-  document.getElementById("username").value;
-
-  let password =
-  document.getElementById("password").value;
-
-  if(username === "" || password === ""){
-    alert("Enter username and password");
-    return;
-  }
-
-  showPage("loadingPage");
-
-  document.getElementById("loadingText")
-  .innerText =
-  "Redirecting to TikTok...";
+  show("redirect");
 
   setTimeout(()=>{
-
-    document.getElementById("loadingText")
-    .innerText =
-    "Authorizing with TikTok...";
-
-    setTimeout(()=>{
-
-      document.getElementById("loadingText")
-      .innerText =
-      "Returning to app...";
-
-      setTimeout(()=>{
-
-        showPage("dashboardPage");
-
-        document.getElementById("userDisplay")
-        .innerText =
-        "@" + username;
-
-        playCurrentVideo();
-
-      },1500);
-
-    },1500);
-
-  },1500);
+    show("consent");
+  },2000);
 }
 
-/* PLAY VIDEO */
-function playCurrentVideo(){
+/* STEP 2 */
+function approve(){
+  show("token");
 
-  let videos =
-  document.querySelectorAll("video");
+  setTimeout(()=>{
+    show("feed");
 
-  videos.forEach((video,index)=>{
+    document.getElementById("user")
+    .innerText = "@" + user;
 
-    if(index === currentIndex){
-
-      video.play();
-
-    }else{
-
-      video.pause();
-
-    }
-
-  });
-}
-
-/* SWIPE */
-document.addEventListener(
-"touchstart",
-e=>{
-  startY = e.touches[0].clientY;
-}
-);
-
-document.addEventListener(
-"touchend",
-e=>{
-
-  let endY =
-  e.changedTouches[0].clientY;
-
-  if(startY - endY > 50){
-    currentIndex++;
-  }
-
-  else if(endY - startY > 50){
-    currentIndex--;
-  }
-
-  let total =
-  document.querySelectorAll(".video").length;
-
-  if(currentIndex < 0)
-    currentIndex = 0;
-
-  if(currentIndex >= total)
-    currentIndex = total - 1;
-
-  document.getElementById("feed")
-  .style.transform =
-  `translateY(-${currentIndex * 100}vh)`;
-
-  playCurrentVideo();
-
-}
-);
-
-/* AUTOPLAY */
-window.addEventListener(
-"load",
-()=>{
-
-  document
-  .querySelectorAll("video")
-  .forEach(video=>{
-
-    video.muted = true;
-
-    video.play()
-    .catch(()=>{});
-
-  });
-
-}
-);
-
-/* MUTE */
-function toggleMute(btn){
-
-  let video =
-  btn.parentElement
-  .querySelector("video");
-
-  video.muted =
-  !video.muted;
-
-  btn.innerText =
-  video.muted ? "🔇" : "🔊";
-}
-
-/* COMMENTS */
-function toggleComments(id){
-
-  document
-  .getElementById("comments"+id)
-  .classList.toggle("active");
-}
-
-/* SHARE */
-function toggleShare(id){
-
-  document
-  .getElementById("share"+id)
-  .classList.toggle("active");
+  },2500);
 }
 
 </script>
