@@ -1,32 +1,57 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>TikTok Bot Dashboard</title>
+  <title>TikTok Integration Demo</title>
 </head>
 
-<body style="font-family:Arial; text-align:center; padding:30px;">
+<body style="font-family:Arial; background:#111; color:white; text-align:center; padding:30px;">
 
-  <h1>🚀 TikTok Bot Dashboard</h1>
+  <h1>🎵 TikTok Integration Demo App</h1>
 
-  <p>Welcome to your web app</p>
+  <!-- LOGIN SECTION -->
+  <div style="margin-top:30px;">
+    <h2>Login</h2>
 
-  <input id="input" placeholder="Enter text"
-    style="padding:10px; width:250px;">
+    <button onclick="loginTikTok()" style="padding:12px 20px;">
+      Login with TikTok
+    </button>
 
-  <br><br>
+    <p id="loginStatus" style="margin-top:10px;"></p>
+  </div>
 
-  <button onclick="run()"
-    style="padding:10px 20px;">
-    Generate
-  </button>
+  <hr style="margin:30px;">
 
-  <h3 id="output" style="margin-top:20px;"></h3>
+  <!-- PROFILE SECTION -->
+  <div id="profile" style="display:none;">
+    <h2>👤 User Profile</h2>
+
+    <p>Name: Demo User</p>
+    <p>Username: @demo_user</p>
+  </div>
+
+  <hr style="margin:30px;">
+
+  <!-- VIDEO SECTION -->
+  <div id="videos" style="display:none;">
+    <h2>🎬 TikTok Videos</h2>
+
+    <ul style="list-style:none;">
+      <li>Video 1 - Trending content</li>
+      <li>Video 2 - Viral idea</li>
+      <li>Video 3 - AI generated script</li>
+    </ul>
+  </div>
 
   <script>
-    function run() {
-      let text = document.getElementById("input").value;
-      document.getElementById("output").innerText =
-        "Result: " + text;
+    function loginTikTok() {
+      document.getElementById("loginStatus").innerText = "Logging in...";
+
+      setTimeout(() => {
+        document.getElementById("loginStatus").innerText = "Login successful ✔";
+
+        document.getElementById("profile").style.display = "block";
+        document.getElementById("videos").style.display = "block";
+      }, 1500);
     }
   </script>
 
