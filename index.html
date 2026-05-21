@@ -1,85 +1,227 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>TikTok Demo Login</title>
+  <title>TikTok Final Safe Demo</title>
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial;
+      background: black;
+      color: white;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    /* PAGE FADE */
+    .page {
+      height: 100vh;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    input {
+      padding: 12px;
+      width: 220px;
+      border-radius: 10px;
+      border: none;
+      margin-top: 10px;
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 12px 18px;
+      border: none;
+      border-radius: 10px;
+      background: #ff2d55;
+      color: white;
+      cursor: pointer;
+    }
+
+    /* SPINNER */
+    .spinner {
+      margin-top: 20px;
+      width: 45px;
+      height: 45px;
+      border: 4px solid #333;
+      border-top: 4px solid #ff2d55;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* FEED */
+    #feed {
+      height: 100vh;
+      overflow-y: scroll;
+      scroll-snap-type: y mandatory;
+    }
+
+    .video {
+      height: 100vh;
+      scroll-snap-align: start;
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      background: black;
+    }
+
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .overlay {
+      position: absolute;
+      bottom: 80px;
+      left: 20px;
+    }
+
+    .username {
+      opacity: 0.8;
+      margin-bottom: 5px;
+    }
+
+    .actions {
+      position: absolute;
+      right: 15px;
+      bottom: 120px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      text-align: center;
+    }
+
+    .btn {
+      background: rgba(255,255,255,0.1);
+      padding: 10px;
+      border-radius: 50%;
+    }
+
+    .like {
+      color: #ff2d55;
+    }
+
+    .muteBtn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(255,255,255,0.1);
+      padding: 10px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 
-<body style="font-family:Arial; text-align:center; background:#111; color:white; padding:30px;">
+<body>
 
-  <h1>🎵 TikTok Integration Demo</h1>
+<!-- LOGIN -->
+<div id="loginPage" class="page active">
+  <h1>🎵 TikTok Login</h1>
+  <input id="username" placeholder="Enter username">
+  <button onclick="login()">Login with TikTok</button>
+</div>
 
-  <!-- INPUT -->
-  <input id="username" placeholder="Enter username"
-    style="padding:10px; width:200px;">
+<!-- LOADING -->
+<div id="loadingScreen" class="page">
+  <h2 id="loadingText">Logging in...</h2>
+  <div class="spinner"></div>
+</div>
 
-  <br><br>
+<!-- FEED -->
+<div id="dashboardPage" class="page">
+  <div id="feed">
 
-  <!-- BUTTON -->
-  <button onclick="loginTikTok()" style="padding:12px 20px;">
-    Login with TikTok
-  </button>
+    <!-- VIDEO 1 -->
+    <div class="video">
+      <video autoplay muted loop playsinline>
+        <source src="https://www.w3schools.com/html/mov_bbb.mp4">
+      </video>
 
-  <p id="loginStatus" style="margin-top:15px;"></p>
+      <div class="muteBtn" onclick="toggleMute(this)">🔇</div>
 
-  <hr style="margin:30px;">
+      <div class="overlay">
+        <div class="username" id="userDisplay"></div>
+        <div>🔥 Trending Dance Video</div>
+      </div>
 
-  <!-- PROFILE -->
-  <div id="profile" style="display:none;">
-    <h2>👤 Profile</h2>
-    <p>Name: <span id="nameDisplay"></span></p>
-    <p>Username: <span id="userDisplay"></span></p>
+      <div class="actions">
+        <div class="btn like">❤️<br>120K</div>
+        <div class="btn">💬<br>5K</div>
+        <div class="btn">↗</div>
+      </div>
+    </div>
+
+    <!-- VIDEO 2 -->
+    <div class="video">
+      <video autoplay muted loop playsinline>
+        <source src="https://www.w3schools.com/html/movie.mp4">
+      </video>
+
+      <div class="overlay">
+        <div>🎬 AI Generated Content</div>
+      </div>
+
+      <div class="actions">
+        <div class="btn like">❤️<br>89K</div>
+        <div class="btn">💬<br>3K</div>
+        <div class="btn">↗</div>
+      </div>
+    </div>
+
   </div>
+</div>
 
-  <hr style="margin:30px;">
+<script>
+function showPage(id) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
 
-  <!-- VIDEOS -->
-  <div id="videos" style="display:none;">
-    <h2>🎬 Videos</h2>
-    <ul style="list-style:none;">
-      <li>Video 1 - Trending</li>
-      <li>Video 2 - Viral Idea</li>
-      <li>Video 3 - AI Content</li>
-    </ul>
-  </div>
+function login() {
+  let name = document.getElementById("username").value;
+  if (!name) return;
 
-  <script>
-    function loginTikTok() {
-      let name = document.getElementById("username").value;
+  showPage("loadingScreen");
 
-      if (name === "") {
-        document.getElementById("loginStatus").innerText =
-          "Please enter username first ❌";
-        return;
-      }
+  setTimeout(() => {
+    document.getElementById("loadingText").innerText = "Authenticating...";
 
-      document.getElementById("loginStatus").innerText =
-        "Redirecting to TikTok...";
+    setTimeout(() => {
+      showPage("dashboardPage");
+      document.getElementById("userDisplay").innerText = "@" + name;
 
-      setTimeout(() => {
-        document.getElementById("loginStatus").innerText =
-          "Authorizing with TikTok...";
+    }, 1500);
 
-        setTimeout(() => {
-          document.getElementById("loginStatus").innerText =
-            "Returning to app...";
+  }, 1500);
+}
 
-          setTimeout(() => {
-            document.getElementById("loginStatus").innerText =
-              "Login successful ✔ Welcome " + name;
-
-            document.getElementById("profile").style.display = "block";
-            document.getElementById("videos").style.display = "block";
-
-            document.getElementById("nameDisplay").innerText = name;
-            document.getElementById("userDisplay").innerText = "@" + name;
-
-          }, 1200);
-
-        }, 1200);
-
-      }, 1200);
-    }
-  </script>
+function toggleMute(btn) {
+  let video = btn.parentElement.querySelector("video");
+  video.muted = !video.muted;
+  btn.innerText = video.muted ? "🔇" : "🔊";
+}
+</script>
 
 </body>
 </html>
