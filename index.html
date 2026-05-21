@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -13,16 +12,13 @@
       color: white;
     }
 
-    /* PHONE FRAME */
     .phone {
       width: 100vw;
       height: 100vh;
       position: relative;
       overflow: hidden;
-      background: black;
     }
 
-    /* TOP BAR */
     .topbar {
       position: absolute;
       top: 0;
@@ -35,7 +31,6 @@
       background: rgba(0,0,0,0.3);
     }
 
-    /* PAGES */
     .page {
       display: none;
       height: 100vh;
@@ -49,9 +44,8 @@
       display: block;
     }
 
-    /* FEED */
     #feed {
-      transition: transform 0.5s ease;
+      transition: transform 0.4s ease;
     }
 
     .video {
@@ -81,7 +75,6 @@
       display: inline-block;
     }
 
-    /* NAV BAR */
     .nav {
       position: absolute;
       bottom: 0;
@@ -97,34 +90,18 @@
       cursor: pointer;
     }
 
-    /* EXPLORE */
-    .explore {
-      padding: 20px;
+    /* LIKE ANIMATION */
+    .heart {
+      position: absolute;
+      right: 20px;
+      bottom: 160px;
+      font-size: 30px;
+      cursor: pointer;
+      transition: 0.2s;
     }
 
-    .card {
-      background: #111;
-      padding: 15px;
-      margin-bottom: 10px;
-      border-radius: 12px;
-    }
-
-    /* ANALYTICS */
-    .analytics {
-      padding: 20px;
-    }
-
-    .bar {
-      height: 10px;
-      background: #222;
-      border-radius: 5px;
-      margin: 5px 0;
-    }
-
-    .fill {
-      height: 10px;
-      background: #ff0050;
-      border-radius: 5px;
+    .heart:active {
+      transform: scale(1.4);
     }
 
   </style>
@@ -132,9 +109,13 @@
 
 <body>
 
+<!-- 🎵 BACKGROUND SOUNDTRACK -->
+<audio id="bgMusic" loop>
+  <source src="https://cdn.pixabay.com/download/audio/2022/10/16/audio_c8c8a8b6b6.mp3?filename=lofi-study-112191.mp3">
+</audio>
+
 <div class="phone">
 
-  <!-- TOP BAR -->
   <div class="topbar">
     <div>📶 5G</div>
     <div>🔋 88%</div>
@@ -150,8 +131,10 @@
 
       <div class="overlay">
         <h3>@creator1</h3>
-        <div class="tag">🔥 For You</div>
+        <div class="tag">🔐 OAuth: TikTok Login Simulation</div>
       </div>
+
+      <div class="heart" onclick="like()">❤️</div>
     </div>
 
     <div class="video">
@@ -161,71 +144,53 @@
 
       <div class="overlay">
         <h3>@creator2</h3>
-        <div class="tag">🔥 Trending</div>
+        <div class="tag">📡 Feed: Demo Content Source</div>
       </div>
-    </div>
 
-  </div>
-
-  <!-- EXPLORE -->
-  <div id="explore" class="page">
-
-    <div class="explore">
-
-      <h2>🔍 Explore</h2>
-
-      <div class="card">🔥 Viral Videos</div>
-      <div class="card">🎵 Trending Sounds</div>
-      <div class="card">📈 Rising Creators</div>
-
-    </div>
-
-  </div>
-
-  <!-- ANALYTICS -->
-  <div id="analytics" class="page">
-
-    <div class="analytics">
-
-      <h2>📊 Creator Insights</h2>
-
-      <p>Engagement</p>
-      <div class="bar"><div class="fill" style="width:80%"></div></div>
-
-      <p>Retention</p>
-      <div class="bar"><div class="fill" style="width:65%"></div></div>
-
-      <p>Viral Score</p>
-      <div class="bar"><div class="fill" style="width:90%"></div></div>
-
+      <div class="heart" onclick="like()">❤️</div>
     </div>
 
   </div>
 
   <!-- NAV -->
   <div class="nav">
-    <div onclick="go('feed')">🏠 Home</div>
-    <div onclick="go('explore')">🔍 Explore</div>
-    <div onclick="go('analytics')">📊 Analytics</div>
+    <div onclick="switchFeed()">🏠 Feed</div>
+    <div onclick="toggleSound()">🔊 Sound</div>
+    <div onclick="startMusic()">🎵 Music</div>
   </div>
 
 </div>
 
 <script>
 
-function go(page){
+let startY = 0;
+let soundOn = false;
 
-  document.querySelectorAll(".page")
-  .forEach(p=>p.classList.remove("active"));
-
-  document.getElementById(page)
-  .classList.add("active");
-
+/* 🎵 BACKGROUND MUSIC */
+function startMusic(){
+  let music = document.getElementById("bgMusic");
+  music.play();
+  soundOn = true;
 }
 
-/* SIMPLE SWIPE */
-let startY = 0;
+/* 🔊 TOGGLE SOUND */
+function toggleSound(){
+  let videos = document.querySelectorAll("video");
 
+  videos.forEach(v=>{
+    v.muted = !v.muted;
+  });
+
+  navigator.vibrate?.(50);
+}
+
+/* ❤️ LIKE SOUND EFFECT */
+function like(){
+  let audio = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_7fb7c5a8d2.mp3?filename=click-124467.mp3");
+  audio.play();
+}
+
+/* SWIPE ENGINE */
 document.addEventListener("touchstart",e=>{
   startY = e.touches[0].clientY;
 });
@@ -233,7 +198,6 @@ document.addEventListener("touchstart",e=>{
 document.addEventListener("touchend",e=>{
 
   let endY = e.changedTouches[0].clientY;
-
   let feed = document.getElementById("feed");
 
   if(startY - endY > 50){
@@ -244,7 +208,14 @@ document.addEventListener("touchend",e=>{
     feed.scrollTop -= window.innerHeight;
   }
 
+  navigator.vibrate?.(30);
+
 });
+
+/* OPTIONAL NAV RESET */
+function switchFeed(){
+  document.getElementById("feed").scrollTop = 0;
+}
 
 </script>
 
