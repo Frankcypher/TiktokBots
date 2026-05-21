@@ -1,17 +1,17 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>TikTok Bot Site</title>
-</head>
-<body style="text-align:center; font-family:Arial; background:#111; color:white;">
+<script>
+async function generateAI() {
+  let prompt = document.getElementById("prompt").value;
+  document.getElementById("output").innerText = "Generating...";
 
-  <h1>🔥 TikTok Bot Dashboard</h1>
+  const res = await fetch("/api/generate", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ prompt })
+  });
 
-  <p>Welcome to your first deployed web app</p>
-
-  <button onclick="alert('Bot activated!')">
-    Start Bot
-  </button>
-
-</body>
-</html>
+  const data = await res.json();
+  document.getElementById("output").innerText = data.result;
+}
+</script>
