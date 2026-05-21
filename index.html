@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>TikTok Final Safe Demo</title>
+  <title>TikTok AI Final Pro</title>
 
   <style>
     html, body {
@@ -14,24 +14,15 @@
       overflow: hidden;
     }
 
-    /* PAGE FADE */
     .page {
       height: 100vh;
       display: none;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      animation: fadeIn 0.5s ease;
     }
 
-    .active {
-      display: flex;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+    .active { display: flex; }
 
     input {
       padding: 12px;
@@ -51,36 +42,20 @@
       cursor: pointer;
     }
 
-    /* SPINNER */
-    .spinner {
-      margin-top: 20px;
-      width: 45px;
-      height: 45px;
-      border: 4px solid #333;
-      border-top: 4px solid #ff2d55;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
     /* FEED */
+    #feedWrapper {
+      height: 100vh;
+      overflow: hidden;
+    }
+
     #feed {
       height: 100vh;
-      overflow-y: scroll;
-      scroll-snap-type: y mandatory;
+      transition: transform 0.4s ease;
     }
 
     .video {
       height: 100vh;
-      scroll-snap-align: start;
       position: relative;
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
       background: black;
     }
 
@@ -96,11 +71,6 @@
       left: 20px;
     }
 
-    .username {
-      opacity: 0.8;
-      margin-bottom: 5px;
-    }
-
     .actions {
       position: absolute;
       right: 15px;
@@ -108,24 +78,86 @@
       display: flex;
       flex-direction: column;
       gap: 20px;
-      text-align: center;
     }
 
     .btn {
       background: rgba(255,255,255,0.1);
       padding: 10px;
       border-radius: 50%;
+      text-align: center;
+      cursor: pointer;
     }
 
     .like {
       color: #ff2d55;
     }
 
+    .liked {
+      transform: scale(1.4);
+    }
+
     .muteBtn {
       position: absolute;
       top: 20px;
       right: 20px;
+      padding: 10px;
+      border-radius: 10px;
       background: rgba(255,255,255,0.1);
+      cursor: pointer;
+    }
+
+    /* 💬 COMMENTS POPUP */
+    .comments {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0,0,0,0.95);
+      height: 0;
+      overflow: hidden;
+      transition: 0.3s;
+      padding: 0 15px;
+    }
+
+    .comments.active {
+      height: 40%;
+      padding: 15px;
+    }
+
+    .comment {
+      padding: 10px;
+      border-bottom: 1px solid #333;
+    }
+
+    /* 🔗 SHARE POPUP */
+    .share {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(20,20,20,0.95);
+      height: 0;
+      overflow: hidden;
+      transition: 0.3s;
+      text-align: center;
+    }
+
+    .share.active {
+      height: 25%;
+      padding: 20px;
+    }
+
+    .share button {
+      margin: 10px;
+      background: #333;
+    }
+
+    /* 🤖 AI BUTTON */
+    .aiBtn {
+      position: absolute;
+      top: 60px;
+      right: 20px;
+      background: #00c2ff;
       padding: 10px;
       border-radius: 10px;
       cursor: pointer;
@@ -139,87 +171,148 @@
 <div id="loginPage" class="page active">
   <h1>🎵 TikTok Login</h1>
   <input id="username" placeholder="Enter username">
-  <button onclick="login()">Login with TikTok</button>
-</div>
-
-<!-- LOADING -->
-<div id="loadingScreen" class="page">
-  <h2 id="loadingText">Logging in...</h2>
-  <div class="spinner"></div>
+  <button onclick="login()">Login</button>
 </div>
 
 <!-- FEED -->
 <div id="dashboardPage" class="page">
-  <div id="feed">
-
-    <!-- VIDEO 1 -->
-    <div class="video">
-      <video autoplay muted loop playsinline>
-        <source src="https://www.w3schools.com/html/mov_bbb.mp4">
-      </video>
-
-      <div class="muteBtn" onclick="toggleMute(this)">🔇</div>
-
-      <div class="overlay">
-        <div class="username" id="userDisplay"></div>
-        <div>🔥 Trending Dance Video</div>
-      </div>
-
-      <div class="actions">
-        <div class="btn like">❤️<br>120K</div>
-        <div class="btn">💬<br>5K</div>
-        <div class="btn">↗</div>
-      </div>
-    </div>
-
-    <!-- VIDEO 2 -->
-    <div class="video">
-      <video autoplay muted loop playsinline>
-        <source src="https://www.w3schools.com/html/movie.mp4">
-      </video>
-
-      <div class="overlay">
-        <div>🎬 AI Generated Content</div>
-      </div>
-
-      <div class="actions">
-        <div class="btn like">❤️<br>89K</div>
-        <div class="btn">💬<br>3K</div>
-        <div class="btn">↗</div>
-      </div>
-    </div>
-
+  <div id="feedWrapper">
+    <div id="feed"></div>
   </div>
 </div>
 
 <script>
-function showPage(id) {
-  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
+let index = 0;
+let feed = document.getElementById("feed");
+let videos = [];
+let user = "";
+
+const videoPool = [
+  {src:"https://www.w3schools.com/html/mov_bbb.mp4", title:"🔥 Viral Dance", likes:120000},
+  {src:"https://www.w3schools.com/html/movie.mp4", title:"🎬 AI Clip", likes:89000},
+  {src:"https://www.w3schools.com/html/mov_bbb.mp4", title:"😂 Funny", likes:54000}
+];
+
+function shuffle(a){return a.sort(()=>Math.random()-0.5);}
+
+/* LOGIN */
+function login(){
+  let name=document.getElementById("username").value;
+  if(!name)return;
+
+  user=name;
+  document.getElementById("loginPage").style.display="none";
+  document.getElementById("dashboardPage").classList.add("active");
+
+  buildFeed();
 }
 
-function login() {
-  let name = document.getElementById("username").value;
-  if (!name) return;
+/* BUILD FEED */
+function buildFeed(){
+  feed.innerHTML="";
+  videos=shuffle([...videoPool]);
 
-  showPage("loadingScreen");
+  videos.forEach((v,i)=>{
+    let div=document.createElement("div");
+    div.className="video";
 
-  setTimeout(() => {
-    document.getElementById("loadingText").innerText = "Authenticating...";
+    div.innerHTML=`
+      <video autoplay muted playsinline loop>
+        <source src="${v.src}">
+      </video>
 
-    setTimeout(() => {
-      showPage("dashboardPage");
-      document.getElementById("userDisplay").innerText = "@" + name;
+      <div class="overlay">
+        <div>@${user}</div>
+        <div>${v.title}</div>
+        <div id="likeText${i}">❤️ ${v.likes}</div>
+      </div>
 
-    }, 1500);
+      <div class="actions">
+        <div class="btn like" onclick="likeVideo(${i})" id="likeBtn${i}">❤️</div>
+        <div class="btn" onclick="openComments(${i})">💬</div>
+        <div class="btn" onclick="openShare(${i})">↗</div>
+      </div>
 
-  }, 1500);
+      <div class="muteBtn" onclick="toggleMute(this)">🔇</div>
+
+      <div class="aiBtn" onclick="generateAI(${i})">🤖 AI</div>
+
+      <div class="comments" id="comments${i}">
+        <div class="comment">Nice video 🔥</div>
+        <div class="comment">Amazing content 👍</div>
+        <div class="comment">So cool 😎</div>
+      </div>
+
+      <div class="share" id="share${i}">
+        <p>Share this video</p>
+        <button>Copy Link</button>
+        <button>WhatsApp</button>
+        <button>Cancel</button>
+      </div>
+    `;
+
+    feed.appendChild(div);
+  });
+
+  updateFeed();
 }
 
-function toggleMute(btn) {
-  let video = btn.parentElement.querySelector("video");
-  video.muted = !video.muted;
-  btn.innerText = video.muted ? "🔇" : "🔊";
+/* SWIPE */
+document.addEventListener("touchstart",e=>startY=e.touches[0].clientY);
+document.addEventListener("touchend",e=>{
+  let endY=e.changedTouches[0].clientY;
+  if(startY-endY>50)next();
+  if(endY-startY>50)prev();
+});
+let startY=0;
+
+function updateFeed(){
+  feed.style.transform=`translateY(-${index*100}vh)`;
+
+  document.querySelectorAll("video").forEach((v,i)=>{
+    i===index?v.play():v.pause();
+  });
+}
+
+function next(){if(index<videos.length-1)index++;updateFeed();}
+function prev(){if(index>0)index--;updateFeed();}
+
+/* ❤️ LIKE */
+function likeVideo(i){
+  let btn=document.getElementById("likeBtn"+i);
+  let text=document.getElementById("likeText"+i);
+
+  btn.classList.add("liked");
+  videos[i].likes++;
+
+  text.innerText="❤️ "+videos[i].likes;
+
+  setTimeout(()=>btn.classList.remove("liked"),300);
+}
+
+/* 💬 COMMENTS */
+function openComments(i){
+  let c=document.getElementById("comments"+i);
+  c.classList.toggle("active");
+}
+
+/* 🔗 SHARE */
+function openShare(i){
+  let s=document.getElementById("share"+i);
+  s.classList.toggle("active");
+}
+
+/* 🤖 AI GENERATE (DEMO) */
+function generateAI(i){
+  videos[i].title="🤖 AI Generated Viral Video";
+  buildFeed();
+}
+
+/* 🔊 MUTE */
+function toggleMute(btn){
+  let v=btn.parentElement.querySelector("video");
+  v.muted=!v.muted;
+  btn.innerText=v.muted?"🔇":"🔊";
 }
 </script>
 
